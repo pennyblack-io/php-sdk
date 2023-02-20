@@ -37,6 +37,6 @@
     ],
     "phpcs": "./vendor/bin/phpcs",
     "phpstan": "./vendor/bin/phpstan analyse -c phpstan.neon src",
-    "phpmd": "./vendor/bin/phpmd ./src text ./phpmd.xml",
+    "phpmd": "./vendor/bin/phpmd ./src text ./phpmd.xml"
   }
 }
