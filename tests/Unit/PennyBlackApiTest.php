@@ -2,12 +2,12 @@
 
 namespace Unit\Api;
 
+use PennyBlack\Api;
+use PennyBlack\Client\PennyBlackClient;
+use PennyBlack\Exception\RequestException;
+use PennyBlack\Model\Order;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPApiClient\Client\PennyBlackClient;
-use PHPApiClient\Exception\RequestException;
-use PHPApiClient\Model\Order;
-use PHPApiClient\PennyBlackApi;
 
 class PennyBlackApiTest extends TestCase
 {
@@ -21,7 +21,7 @@ class PennyBlackApiTest extends TestCase
 
     public function testItSendsAnInstallRequest()
     {
-        $api = new PennyBlackApi($this->mockClient);
+        $api = new Api($this->mockClient);
 
         $this->mockClient
             ->expects($this->once())
@@ -33,7 +33,7 @@ class PennyBlackApiTest extends TestCase
 
     public function testItSendsAnOrderRequest()
     {
-        $api = new PennyBlackApi($this->mockClient);
+        $api = new Api($this->mockClient);
 
         $mockOrder = $this->createMock(Order::class);
         $mockOrder->method('toArray')->willReturn([
@@ -61,7 +61,7 @@ class PennyBlackApiTest extends TestCase
 
     public function testItSendsAnOrderRequestAfterRetrying()
     {
-        $api = new PennyBlackApi($this->mockClient);
+        $api = new Api($this->mockClient);
 
         $mockOrder = $this->createMock(Order::class);
         $mockOrder->method('toArray')->willReturn([
@@ -96,7 +96,7 @@ class PennyBlackApiTest extends TestCase
 
     public function testItThrowsAnExceptionIfOrderSendingFailsMoreThanThreeTimes()
     {
-        $api = new PennyBlackApi($this->mockClient);
+        $api = new Api($this->mockClient);
 
         $mockOrder = $this->createMock(Order::class);
         $mockOrder->method('toArray')->willReturn([

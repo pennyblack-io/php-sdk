@@ -1,8 +1,11 @@
 <?php
 
-namespace PHPApiClient\Model;
+namespace Unit\Model;
 
 use InvalidArgumentException;
+use PennyBlack\Model\Customer;
+use PennyBlack\Model\Order;
+use PennyBlack\Model\OrderDetails;
 use PHPUnit\Framework\TestCase;
 
 class OrderTest extends TestCase

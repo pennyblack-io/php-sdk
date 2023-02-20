@@ -1,12 +1,12 @@
 <?php
 
-namespace PHPApiClient;
+namespace PennyBlack;
 
-use PHPApiClient\Client\PennyBlackClient;
-use PHPApiClient\Exception\RequestException;
-use PHPApiClient\Model\Order;
+use PennyBlack\Client\PennyBlackClient;
+use PennyBlack\Exception\RequestException;
+use PennyBlack\Model\Order;
 
-class PennyBlackApi
+class Api
 {
     private const MAX_RETRIES = 3;
 

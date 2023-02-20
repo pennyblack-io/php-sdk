@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPApiClient\Exception;
+namespace PennyBlack\Exception;
 
 class AuthenticationException extends \Exception
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace PHPApiClient\Client;
+namespace PennyBlack\Client;
 
-use PHPApiClient\Exception\AuthenticationException;
-use PHPApiClient\Exception\RequestException;
+use PennyBlack\Exception\AuthenticationException;
+use PennyBlack\Exception\RequestException;
 
 class PennyBlackClient
 {

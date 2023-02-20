@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPApiClient\Model;
+namespace PennyBlack\Model;
 
 use InvalidArgumentException;
 
