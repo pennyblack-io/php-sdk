@@ -23,3 +23,8 @@ We use PHPUnit for unit testing the app and PHPStan, PHP CodeSniffer and PHP Mes
 
 ## Releasing
 
+This repo makes use of a single `main` branch, so in order to release any changes create a new tag against the current
+state of the `main` branch.
+
+Once the new tag has been created, any of our PHP apps that make use of this library should be updated to use the new
+version.
