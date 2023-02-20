@@ -1,0 +1,20 @@
+name: PHP Api Client CI
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-php-74:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+      - uses: php-actions/composer@v6
+        with:
+          php_version: "7.4.33"
+          version: "2.2"
+      - run: "composer unit-test"
+      - run: "composer quality-check"
