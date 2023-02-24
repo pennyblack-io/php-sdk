@@ -38,11 +38,9 @@ class CustomerTest extends TestCase
         );
     }
 
-    public function testItThrowsAnExceptionIfCustomerIdIsNull()
+    public function testItAcceptsNullAsACustomerId()
     {
-        $this->expectException(InvalidArgumentException::class);
-
-        Customer::fromValues(
+        $customer = Customer::fromValues(
             null,
             'Tim',
             'Apple',
@@ -52,6 +50,21 @@ class CustomerTest extends TestCase
             12,
             [],
             12.39
+        );
+
+        $this->assertEquals(
+            [
+                'vendor_customer_id' => null,
+                'first_name' => 'Tim',
+                'last_name' => 'Apple',
+                'email' => 'example@example.com',
+                'language' => 'en',
+                'marketing_consent' => '1',
+                'total_orders' => 12,
+                'tags' => [],
+                'total_spent' => 12.39,
+            ],
+            $customer->toArray()
         );
     }
 

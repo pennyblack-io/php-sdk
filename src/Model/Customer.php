@@ -35,8 +35,8 @@ class Customer
         array $tags,
         float $totalSpent
     ): self {
-        if ($vendorCustomerId === null || $vendorCustomerId === 0) {
-            throw new InvalidArgumentException('Missing vendor customer ID.');
+        if ($vendorCustomerId === 0) {
+            throw new InvalidArgumentException('Invalid vendor customer ID.');
         }
 
         return new self(
@@ -68,7 +68,7 @@ class Customer
     }
 
     private function __construct(
-        int $vendorCustomerId,
+        ?int $vendorCustomerId,
         string $firstName,
         string $lastName,
         string $email,
