@@ -30,7 +30,7 @@ class Customer
         ?string $lastName,
         ?string $email,
         ?string $language,
-        ?string $marketingConsent,
+        bool $marketingConsent,
         int $totalOrders,
         array $tags,
         float $totalSpent
@@ -45,7 +45,7 @@ class Customer
             $lastName ?? '',
             $email ?? '',
             $language ?? '',
-            (bool) $marketingConsent,
+            $marketingConsent,
             $totalOrders,
             $tags,
             $totalSpent
