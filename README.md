@@ -52,6 +52,8 @@ See the [example](example) folder for working examples of how to use the library
 
 You will need an API key to access Penny Black services. If you have a test environment setup then you can set the `$isTest` flag to true to make requests against our test servers. For most customers we only offer production accounts.
 
+The example below uses Guzzle, but you can use any PSR-18 compatible HTTP client, see the package options [here](https://packagist.org/providers/psr/http-client-implementation) and [here](https://packagist.org/providers/psr/http-factory-implementation).
+
 ```php
 <?php
 
