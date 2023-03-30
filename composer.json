@@ -1,6 +1,6 @@
 {
-  "name": "pennyblack/php-api-client",
-  "description": "PennyBlack PHP API Client",
+  "name": "pennyblack/php-sdk",
+  "description": "Penny Black PHP SDK",
   "authors": [
     {
       "name": "Penny Black",

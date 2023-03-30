@@ -20,18 +20,20 @@ For production environments you can include the library as a dependency in your 
 Currently, you will need to add a custom repository to your `composer.json`:
 
 ```json
+  {
     "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:pennyblack-io/php-api-client.git"
-        }
-    ],
+      {
+        "type": "vcs",
+        "url": "git@github.com:pennyblack-io/php-sdk.git"
+      }
+    ]
+  }
 ```
 
 Now you can require the library:
 
 ```bash
-composer require pennyblack-io/php-api-client
+composer require pennyblack-io/php-sdk
 ```
 
 
