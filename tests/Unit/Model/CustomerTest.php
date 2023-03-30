@@ -2,99 +2,85 @@
 
 namespace Unit\Model;
 
-use InvalidArgumentException;
+use PennyBlack\Exception\PennyBlackException;
 use PennyBlack\Model\Customer;
 use PHPUnit\Framework\TestCase;
 
 class CustomerTest extends TestCase
 {
-    public function testItCanBeConvertedToAnArray()
+    public function testItReturnsAnArrayWithMinimalFieldsSet()
     {
-        $customer = Customer::fromValues(
-            (int) '1',
-            'Tim',
-            'Apple',
-            'example@example.com',
-            'en',
-            true,
-            12,
-            [],
-            12.39
-        );
+        $customer = new Customer();
+        $customer->setFirstName('John');
+        $customer->setLastName('Doe');
+        $customer->setEmail('john@example.com');
 
-        $this->assertEquals(
-            [
-                'vendor_customer_id' => 1,
-                'first_name' => 'Tim',
-                'last_name' => 'Apple',
-                'email' => 'example@example.com',
-                'language' => 'en',
-                'marketing_consent' => true,
-                'total_orders' => 12,
-                'tags' => [],
-                'total_spent' => 12.39,
-            ],
-            $customer->toArray()
-        );
+        $this->assertEquals([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'email' => 'john@example.com',
+        ], $customer->toArray());
     }
 
-    public function testItAcceptsNullAsACustomerId()
+    public function testItReturnsAnArrayWithAllFieldsSet()
     {
-        $customer = Customer::fromValues(
-            null,
-            'Tim',
-            'Apple',
-            'example@example.com',
-            'en',
-            true,
-            12,
-            [],
-            12.39
-        );
+        $customer = new Customer();
+        $customer->setFirstName('John');
+        $customer->setLastName('Doe');
+        $customer->setEmail('john@example.com');
+        $customer->setVendorCustomerId(123);
+        $customer->setLanguage('en');
+        $customer->setMarketingConsent(true);
+        $customer->setTotalOrders(5);
+        $customer->setTags(['VIP', 'Loyal Customer']);
+        $customer->setTotalSpent(1234.56);
 
-        $this->assertEquals(
-            [
-                'vendor_customer_id' => null,
-                'first_name' => 'Tim',
-                'last_name' => 'Apple',
-                'email' => 'example@example.com',
-                'language' => 'en',
-                'marketing_consent' => true,
-                'total_orders' => 12,
-                'tags' => [],
-                'total_spent' => 12.39,
-            ],
-            $customer->toArray()
-        );
+        $this->assertEquals([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'email' => 'john@example.com',
+            'vendor_customer_id' => 123,
+            'language' => 'en',
+            'marketing_consent' => true,
+            'total_orders' => 5,
+            'tags' => ['VIP', 'Loyal Customer'],
+            'total_spent' => 1234.56,
+        ], $customer->toArray());
     }
 
-    public function testItReplacesNullValuesWithEmptyStrings()
+    public function testItReturnsAnArrayIgnoringEmptyFields()
     {
-        $customer = Customer::fromValues(
-            (int) '1',
-            'Tim',
-            null,
-            null,
-            null,
-            false,
-            12,
-            [],
-            12.39
-        );
+        $customer = new Customer();
+        $customer->setFirstName('John');
+        $customer->setLastName('Doe');
+        $customer->setEmail('john@example.com');
+        $customer->setVendorCustomerId(123);
+        $customer->setLanguage('');
+        $customer->setMarketingConsent(true);
+        $customer->setTotalOrders(0);
+        $customer->setTags([]);
+        $customer->setTotalSpent(1234.56);
 
-        $this->assertEquals(
-            [
-                'vendor_customer_id' => 1,
-                'first_name' => 'Tim',
-                'last_name' => '',
-                'email' => '',
-                'language' => '',
-                'marketing_consent' => false,
-                'total_orders' => 12,
-                'tags' => [],
-                'total_spent' => 12.39,
-            ],
-            $customer->toArray()
-        );
+        $this->assertEquals([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'email' => 'john@example.com',
+            'vendor_customer_id' => 123,
+            'marketing_consent' => true,
+            'total_orders' => 0,
+            'total_spent' => 1234.56,
+        ], $customer->toArray());
+    }
+
+    public function testItThrowsAnExceptionIfRequiredFieldsAreNotSet()
+    {
+        $this->expectException(PennyBlackException::class);
+        $this->expectExceptionMessage('Required field "lastName" must be set');
+
+        $customer = new Customer();
+        $customer->setFirstName('John');
+        $customer->setEmail('jon@example.com');
+
+        $customer->toArray();
     }
 }

@@ -1,7 +1,13 @@
-# Penny Black PHP API Client
+# Penny Black PHP SDK
 
-This client library introduces a reusable API interface for PHP applications to communicate with the
-Penny Black platform. 
+This client library introduces a reusable API interface for PHP applications to communicate with the Penny Black platform. 
+The SDK wraps up methods to simplify making requests, authorization, error handling and provides guidance of the available parameters via models.
+It follows the PSR-7, PSR-17 and PSR-18 standards, relying on proven external libraries to provide the HTTP client and message factories.
+
+For development, we have bundled in Guzzle, but you are free to choose your own, or use the client included with your platform, as long as it supports these standards.
+
+
+See the [Penny Black API documentation](https://pennyblack.stoplight.io/docs/pennyblack/) for full details of the available end-points.
 
 ## Prerequisites
 
@@ -10,9 +16,128 @@ Penny Black platform.
 
 ## Installation
 
-* `composer install`
+For production environments you can include the library as a dependency in your project using composer.
+Currently, you will need to add a custom repository to your `composer.json`:
+
+```json
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:pennyblack-io/php-api-client.git"
+        }
+    ],
+```
+
+Now you can require the library:
+
+```bash
+composer require pennyblack-io/php-api-client
+```
+
+
+You will also need to ensure you have packages that satisfy the virtual `psr/http-client-implementation` and `psr/http-factory-implementation` requirements.
+If you do not, then you can require Guzzle, which will satisfy both:
+
+```bash
+composer require guzzlehttp/guzzle
+```
+
+
+
+## Usage
+
+See the [example](example) folder for working examples of how to use the library.
+
+### Creating an API instance
+
+You will need an API key to access Penny Black services. If you have a test environment setup then you can set the `$isTest` flag to true to make requests against our test servers. For most customers we only offer production accounts.
+
+```php
+<?php
+
+include __DIR__ . "/../vendor/autoload.php";
+
+use PennyBlack\Api;
+use GuzzleHttp\Psr7\HttpFactory;
+use GuzzleHttp\Client;
+
+$httpClient = new Client();
+$streamFactory = new HttpFactory();
+$requestFactory = new HttpFactory();
+
+$apiKey = "YOUR-API-KEY";
+$isTest = true;
+
+$api = new Api($httpClient, $requestFactory, $streamFactory, $apiKey, $isTest);
+```
+
+### Installing your store
+
+This request acts as validation for your API key and configures Penny Black with your store domain:
+
+```php
+$api->installStore("your.store.com");
+```
+
+### Sending an order
+
+You should send all created orders to our orders ingest endpoint:
+
+```php
+$order = new Order()
+    ->setId("42")
+    ->setNumber("#42")
+    ->setCreatedAt(new DateTime())
+    ->setCurrency('GBP')
+    ->setTotalAmount(123.45)
+    ->setTotalItems(2)
+    ;
+   
+// You only need to send optional fields if you have data for them 
+if ($hasShippingAddress) {
+    $order->setShippingCity('London')
+    ->setShippingCountry('GB')
+    ->setShippingPostcode('SE15AB')
+    ;
+}
+
+$customer = new Customer()
+    ->setFirstName("John")
+    ->setLastName("Doe")
+    ->setEmail("john@example.com"
+    ->setVendorCustomerId("42")
+    ...
+    ;
+    
+$origin = "magento";
+    
+$api->sendOrder($order, $customer, $origin);
+```
+
+### Triggering a single print
+
+```php
+TODO
+```
+
+### Triggering a batch print
+
+```php
+TODO
+```
+
+### Getting the print status of an order
+
+```php
+TODO
+```
+
 
 ## Development
+
+`composer install` in development will include dev dependencies to allow you to work with Guzzle and test requests.
+
+See the `example` folder for working examples of how to use the library.
 
 ### Tests & Linting
 
@@ -21,10 +146,3 @@ We use PHPUnit for unit testing the app and PHPStan, PHP CodeSniffer and PHP Mes
 * Run `composer unit-test` to run the unit tests.
 * Run `composer quality-check` to run the quality check tools.
 
-## Releasing
-
-This repo makes use of a single `main` branch, so in order to release any changes create a new tag against the current
-state of the `main` branch.
-
-Once the new tag has been created, any of our PHP apps that make use of this library should be updated to use the new
-version.

@@ -1,0 +1,246 @@
+<?php
+
+namespace Unit;
+
+use PennyBlack\Api;
+use PennyBlack\Exception\ApiException;
+use PennyBlack\Exception\AuthenticationException;
+use PennyBlack\Exception\ServerErrorException;
+use PennyBlack\Exception\ServiceUnavailableException;
+use PennyBlack\Model\Customer;
+use PennyBlack\Model\Order;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\StreamInterface;
+
+class ApiTest extends TestCase
+{
+    /** @var MockObject|ClientInterface */
+    private $mockClient;
+
+    /** @var MockObject|RequestFactoryInterface */
+    private $mockRequestFactory;
+
+    /** @var MockObject|StreamFactoryInterface */
+    private $mockStreamFactory;
+
+    public function setUp(): void
+    {
+        $this->mockClient = $this->createMock(ClientInterface::class);
+        $this->mockRequestFactory = $this->createMock(RequestFactoryInterface::class);
+        $this->mockStreamFactory = $this->createMock(StreamFactoryInterface::class);
+    }
+
+    public function testItSendsAStoreInstallRequest()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.pennyblack.io/ingest/install',
+            ['shop_url' => 'test-domain.com'],
+            200,
+            ['success' => true]
+        );
+
+        $api->installStore('test-domain.com');
+    }
+
+    public function testItSendsAStoreInstallRequestToTestEndpoint()
+    {
+        $api = new Api(
+            $this->mockClient,
+            $this->mockRequestFactory,
+            $this->mockStreamFactory,
+            'pk-secret',
+            true
+        );
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.test.pennyblack.io/ingest/install',
+            ['shop_url' => 'test-domain.com'],
+            200,
+            ['success' => true]
+        );
+
+        $api->installStore('test-domain.com');
+    }
+
+    public function testItThrowsAnExceptionIfServiceUnavailable()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.pennyblack.io/ingest/install',
+            ['shop_url' => 'test-domain.com'],
+            502,
+            ['error' => 'we are not around right now']
+        );
+
+        $this->expectException(ServiceUnavailableException::class);
+
+        $api->installStore('test-domain.com');
+    }
+
+    public function testItThrowsAnExceptionIfServerError()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.pennyblack.io/ingest/install',
+            ['shop_url' => 'test-domain.com'],
+            500,
+            ['error' => 'oops']
+        );
+
+        $this->expectException(ServerErrorException::class);
+
+        $api->installStore('test-domain.com');
+    }
+
+    public function testItThrowsAnExceptionIfAuthenticationError()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.pennyblack.io/ingest/install',
+            ['shop_url' => 'test-domain.com'],
+            401,
+            ['error' => 'oops']
+        );
+
+        $this->expectException(AuthenticationException::class);
+
+        $api->installStore('test-domain.com');
+    }
+
+    public function testItSendsAnOrder()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $mockOrder = $this->createMock(Order::class);
+        $mockOrder->expects($this->once())
+            ->method('toArray')
+            ->willReturn(['id' => 123]);
+        $mockCustomer = $this->createMock(Customer::class);
+        $mockCustomer->expects($this->once())
+            ->method('toArray')
+            ->willReturn(['email' => 'john@example.com']);
+
+        $content = [
+            'order' => ['id' => 123],
+            'customer' => ['email' => 'john@example.com'],
+            'origin' => 'magento',
+        ];
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.pennyblack.io/ingest/order',
+            $content,
+            202,
+            ['success' => true]
+        );
+
+        $api->sendOrder($mockOrder, $mockCustomer, 'magento');
+    }
+
+    public function testItThrowsAnApiExceptionIfServerSideOrderValidationFails()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $mockOrder = $this->createMock(Order::class);
+        $mockOrder->expects($this->once())
+            ->method('toArray')
+            ->willReturn(['id' => 123]);
+        $mockCustomer = $this->createMock(Customer::class);
+        $mockCustomer->expects($this->once())
+            ->method('toArray')
+            ->willReturn(['email' => 'john@example.com']);
+
+        $content = [
+            'order' => ['id' => 123],
+            'customer' => ['email' => 'john@example.com'],
+            'origin' => 'magento',
+        ];
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.pennyblack.io/ingest/order',
+            $content,
+            422,
+            ['errors' => ['order.number' => 'required field is missing']]
+        );
+
+        $this->expectException(ApiException::class);
+
+        $api->sendOrder($mockOrder, $mockCustomer, 'magento');
+    }
+
+    private function mockClientRequestAndResponse($apiKey, $method, $url, $content, $statusCode, $responseContent)
+    {
+        $mockStream = $this->createMock(StreamInterface::class);
+        $this->mockStreamFactory
+            ->expects($this->once())
+            ->method('createStream')
+            ->with(json_encode($content))
+            ->willReturn($mockStream);
+
+        $mockRequest = $this->createMock(RequestInterface::class);
+        $this->mockRequestFactory
+            ->expects($this->once())
+            ->method('createRequest')
+            ->with($method, $url)
+            ->willReturn($mockRequest);
+
+        $mockRequest->expects($this->exactly(2))
+            ->method('withHeader')
+            ->withConsecutive(
+                ['X-Api-Key', $apiKey],
+                ['Content-Type', 'application/json']
+            )
+            ->willReturnOnConsecutiveCalls($mockRequest, $mockRequest);
+
+        $mockRequest->expects($this->once())
+            ->method('withBody')
+            ->with($mockStream)
+            ->willReturn($mockRequest);
+
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $this->mockClient
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($mockRequest)
+            ->willReturn($mockResponse);
+
+        $mockResponse->expects($this->once())
+            ->method('getStatusCode')
+            ->willReturn($statusCode);
+
+        if ($statusCode !== 401 && $statusCode !== 403) {
+            $mockBody = $this->createMock(StreamInterface::class);
+            $mockResponse->expects($this->once())
+                ->method('getBody')
+                ->willReturn($mockBody);
+
+            $mockBody->expects($this->once())
+                ->method('getContents')
+                ->willReturn(json_encode($responseContent));
+        }
+    }
+}

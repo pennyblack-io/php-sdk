@@ -2,10 +2,13 @@
 
 namespace PennyBlack\Exception;
 
-class AuthenticationException extends \Exception
+class AuthenticationException extends PennyBlackException
 {
-    public function __construct()
+    public function __construct($statusCode)
     {
-        parent::__construct('Authorization failed. Please check your API key is entered correctly', 403);
+        parent::__construct(
+            $statusCode . ': Authorization failed. Please check your API key is entered correctly',
+            $statusCode
+        );
     }
 }
