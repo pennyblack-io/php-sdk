@@ -169,7 +169,14 @@ class Api
         }
 
         if (in_array($statusCode, self::SUCCESS_RESPONSE_CODES)) {
-            return json_decode($response->getBody()->getContents(), true);
+            $output = json_decode($response->getBody()->getContents(), true);
+            if (is_array($output)) {
+                return $output;
+            }
+            if (!$output) {
+                return [];
+            }
+            return [$output];
         }
 
         throw new ApiException($response->getBody()->getContents(), $statusCode);
