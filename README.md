@@ -33,7 +33,7 @@ Currently, you will need to add a custom repository to your `composer.json`:
 Now you can require the library:
 
 ```bash
-composer require pennyblack-io/php-api-client
+composer require pennyblack-io/php-sdk
 ```
 
 
