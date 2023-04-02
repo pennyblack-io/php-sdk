@@ -206,9 +206,9 @@ class ApiTest extends TestCase
             'https://api.pennyblack.io/fulfilment/orders/print',
             [
                 'order_id' => $orderId,
-                'retry' => false,
-                'merchant_id' => $merchantId,
                 'location_id' => $locationId,
+                'merchant_id' => $merchantId,
+                'retry' => false,
             ],
             200,
             []
@@ -229,6 +229,8 @@ class ApiTest extends TestCase
             'https://api.pennyblack.io/fulfilment/orders/print',
             [
                 'order_id' => $orderId,
+                'location_id' => null,
+                'merchant_id' => null,
                 'retry' => true,
             ],
             200,
@@ -252,9 +254,9 @@ class ApiTest extends TestCase
             'https://api.pennyblack.io/fulfilment/orders/batch-print',
             [
                 'order_ids' => $orderIds,
-                'retry' => false,
-                'merchant_id' => $merchantId,
                 'location_id' => $locationId,
+                'merchant_id' => $merchantId,
+                'retry' => false,
             ],
             200,
             []
@@ -275,6 +277,8 @@ class ApiTest extends TestCase
             'https://api.pennyblack.io/fulfilment/orders/batch-print',
             [
                 'order_ids' => $orderIds,
+                'location_id' => null,
+                'merchant_id' => null,
                 'retry' => true,
             ],
             200,
