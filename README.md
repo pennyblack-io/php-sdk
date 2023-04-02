@@ -20,12 +20,14 @@ For production environments you can include the library as a dependency in your 
 Currently, you will need to add a custom repository to your `composer.json`:
 
 ```json
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:pennyblack-io/php-api-client.git"
-        }
-    ],
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:pennyblack-io/php-api-client.git"
+    }
+  ]
+}
 ```
 
 Now you can require the library:
@@ -116,22 +118,42 @@ $origin = "magento";
 $api->sendOrder($order, $customer, $origin);
 ```
 
-### Triggering a single print
+### Print order
+
+NOTE: Fulfilment endpoints use a separate API Key. For smaller merchants who do their own fulfilment this should be 
+the same as your merchant API key, but this is not guaranteed. If you are unsure, please contact support.
 
 ```php
-TODO
+try {
+    $response = $api->requestPrint($orderId, $locationId, $merchantId);
+    print($response);
+} catch (PennyBlackException $e) {
+    print $e->getMessage();
+}
+
 ```
 
-### Triggering a batch print
+### Batch print
 
 ```php
-TODO
+try {
+    $response = $api->requestBatchPrint($orderIds, $locationId, $merchantId);
+    print_r($response);
+} catch (PennyBlackException $e) {
+    print $e->getMessage();
+}
 ```
 
-### Getting the print status of an order
+
+### Get order print status
 
 ```php
-TODO
+try {
+    $response = $api->getOrderPrintStatus($merchantId, $orderId);
+    print_r($response);
+} catch (PennyBlackException $e) {
+    print $e->getMessage();
+}
 ```
 
 
