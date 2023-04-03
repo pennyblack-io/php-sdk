@@ -44,6 +44,8 @@ class Api
     }
 
     /**
+     * @see https://pennyblack.stoplight.io/docs/pennyblack/ingest/operations/create-a-install
+     *
      * @throws PennyBlackException
      */
     public function installStore(string $shopUrl): void
@@ -54,44 +56,86 @@ class Api
     /**
      * Send an order with a retry mechanism for errors that are possibly down to network transmission.
      *
+     * @see https://pennyblack.stoplight.io/docs/pennyblack/ingest/operations/create-a-order
+     *
      * @throws PennyBlackException
      */
     public function sendOrder(Order $order, Customer $customer, string $origin): void
     {
-        $content = [
+        $this->sendPostRequestWithRetries('ingest/order', [
             'order' => $order->toArray(),
             'customer' => $customer->toArray(),
             'origin' => $origin
+        ]);
+    }
+
+    /**
+     * @see https://pennyblack.stoplight.io/docs/pennyblack/fulfilment/operations/create-a-fulfilment-order-print
+     *
+     * @return string The message to indicate the action taken
+     *
+     * @throws PennyBlackException
+     */
+    public function requestPrint(
+        string $orderId,
+        ?string $locationId = null,
+        ?string $merchantId = null,
+        bool $retry = true
+    ): string {
+        $content = [
+            'order_id' => $orderId,
+            'location_id' => $locationId,
+            'merchant_id' => $merchantId,
+            'retry' => $retry,
         ];
 
-        $this->sendPostRequestWithRetries('ingest/order', $content);
+        $output = $this->sendPostRequest('fulfilment/orders/print', $content);
+
+        if (isset($output['message'])) {
+            return (string) $output['message'];
+        }
+        return print_r($output, true);
     }
 
     /**
+     * @see https://pennyblack.stoplight.io/docs/pennyblack/fulfilment/operations/create-a-fulfilment-order-batch-print
+     *
+     * @return array "batchId" and "message" keys
+     *
      * @throws PennyBlackException
      */
-    public function requestPrint(string $orderId, string $merchantId = '', string $printLocation = ''): void
-    {
-        // TODO: Next PR
+    public function requestBatchPrint(
+        array $orderIds,
+        ?string $locationId = null,
+        ?string $merchantId = null,
+        bool $retry = true
+    ): array {
+        $content = [
+            'order_ids' => $orderIds,
+            'location_id' => $locationId,
+            'merchant_id' => $merchantId,
+            'retry' => $retry,
+        ];
+
+        return $this->sendPostRequest('fulfilment/orders/batch-print', $content);
     }
 
     /**
-     * @throws PennyBlackException
-     */
-    public function requestBatchPrint(): void
-    {
-        // TODO: Next PR
-    }
-
-    /**
+     * @see https://pennyblack.stoplight.io/docs/pennyblack/fulfilment/operations/get-a-fulfilment-order
+     *
      * @throws PennyBlackException
      */
     public function getOrderPrintStatus(string $merchantId, string $orderId): array
     {
-        // TODO: Next PR
         return $this->sendGetRequest('fulfilment/orders/' . $merchantId . '/' . $orderId);
     }
 
+    /**
+     * @throws ApiException
+     * @throws AuthenticationException
+     * @throws ServerErrorException
+     * @throws ServiceUnavailableException
+     */
     private function sendPostRequestWithRetries(string $path, $content): array
     {
         $numAttempts = 0;

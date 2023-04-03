@@ -3,6 +3,7 @@
 include __DIR__ . "/../vendor/autoload.php";
 
 use PennyBlack\Api;
+use PennyBlack\Exception\PennyBlackException;
 use PennyBlack\Model\Order;
 use PennyBlack\Model\Customer;
 use GuzzleHttp\Psr7\HttpFactory;
@@ -48,4 +49,8 @@ $customer->setEmail('john.doe@example.com')
     ->setTotalOrders(5)
     ->setTotalSpent(1234.56);
 
-$api->sendOrder($order, $customer, 'magento');
+try {
+    $api->sendOrder($order, $customer, 'magento');
+} catch (PennyBlackException $e) {
+    print "OOPS! Something went wrong: " . $e->getMessage();
+}

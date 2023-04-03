@@ -192,14 +192,129 @@ class ApiTest extends TestCase
         $api->sendOrder($mockOrder, $mockCustomer, 'magento');
     }
 
+    public function testItRequestsAPrint()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $merchantId = "MERCHANT_X";
+        $locationId = "LOCATION_Y";
+        $orderId = "#42";
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.pennyblack.io/fulfilment/orders/print',
+            [
+                'order_id' => $orderId,
+                'location_id' => $locationId,
+                'merchant_id' => $merchantId,
+                'retry' => false,
+            ],
+            200,
+            []
+        );
+
+        $api->requestPrint($orderId, $locationId, $merchantId, false);
+    }
+
+    public function testItRequestsAPrintWithOnlyAnOrderId()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $orderId = "#42";
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.pennyblack.io/fulfilment/orders/print',
+            [
+                'order_id' => $orderId,
+                'location_id' => null,
+                'merchant_id' => null,
+                'retry' => true,
+            ],
+            200,
+            []
+        );
+
+        $api->requestPrint($orderId);
+    }
+
+    public function testItRequestsABatchPrint()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $merchantId = "MERCHANT_X";
+        $locationId = "LOCATION_Y";
+        $orderIds = ["#42", "#24", "#84"];
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.pennyblack.io/fulfilment/orders/batch-print',
+            [
+                'order_ids' => $orderIds,
+                'location_id' => $locationId,
+                'merchant_id' => $merchantId,
+                'retry' => false,
+            ],
+            200,
+            []
+        );
+
+        $api->requestBatchPrint($orderIds, $locationId, $merchantId, false);
+    }
+
+    public function testItRequestsABatchPrintWithOnlyOrderIds()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $orderIds = ["#42", "#24", "#84"];
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.pennyblack.io/fulfilment/orders/batch-print',
+            [
+                'order_ids' => $orderIds,
+                'location_id' => null,
+                'merchant_id' => null,
+                'retry' => true,
+            ],
+            200,
+            []
+        );
+
+        $api->requestBatchPrint($orderIds);
+    }
+
+    public function testItGetsOrderPrintStatus()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'GET',
+            'https://api.pennyblack.io/fulfilment/orders/MERCHANT_ID/42',
+            [],
+            200,
+            ['status' => 'no print']
+        );
+
+        $output = $api->getOrderPrintStatus('MERCHANT_ID', "42");
+        $this->assertEquals($output, ['status' => 'no print']);
+    }
+
     private function mockClientRequestAndResponse($apiKey, $method, $url, $content, $statusCode, $responseContent)
     {
-        $mockStream = $this->createMock(StreamInterface::class);
-        $this->mockStreamFactory
-            ->expects($this->once())
-            ->method('createStream')
-            ->with(json_encode($content))
-            ->willReturn($mockStream);
+        if ('GET' !== $method) {
+            $mockStream = $this->createMock(StreamInterface::class);
+            $this->mockStreamFactory
+                ->expects($this->once())
+                ->method('createStream')
+                ->with(json_encode($content))
+                ->willReturn($mockStream);
+        }
 
         $mockRequest = $this->createMock(RequestInterface::class);
         $this->mockRequestFactory
@@ -208,18 +323,25 @@ class ApiTest extends TestCase
             ->with($method, $url)
             ->willReturn($mockRequest);
 
-        $mockRequest->expects($this->exactly(2))
-            ->method('withHeader')
-            ->withConsecutive(
-                ['X-Api-Key', $apiKey],
-                ['Content-Type', 'application/json']
-            )
-            ->willReturnOnConsecutiveCalls($mockRequest, $mockRequest);
+        if ('GET' === $method) {
+            $mockRequest->expects($this->once())
+                ->method('withHeader')
+                ->with('X-Api-Key', $apiKey)
+                ->willReturn($mockRequest);
+        } else {
+            $mockRequest->expects($this->exactly(2))
+                ->method('withHeader')
+                ->withConsecutive(
+                    ['X-Api-Key', $apiKey],
+                    ['Content-Type', 'application/json']
+                )
+                ->willReturnOnConsecutiveCalls($mockRequest, $mockRequest);
 
-        $mockRequest->expects($this->once())
-            ->method('withBody')
-            ->with($mockStream)
-            ->willReturn($mockRequest);
+            $mockRequest->expects($this->once())
+                ->method('withBody')
+                ->with($mockStream)
+                ->willReturn($mockRequest);
+        }
 
         $mockResponse = $this->createMock(ResponseInterface::class);
         $this->mockClient
