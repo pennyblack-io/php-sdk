@@ -24,7 +24,7 @@ Currently, you will need to add a custom repository to your `composer.json`:
   "repositories": [
     {
       "type": "vcs",
-      "url": "git@github.com:pennyblack-io/php-api-client.git"
+      "url": "git@github.com:pennyblack-io/php-sdk.git"
     }
   ]
 }
