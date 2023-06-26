@@ -25,6 +25,7 @@ class Order
     private ?array $productTitles;
     private ?array $promoCodes;
     private ?bool $subscriptionReorder;
+    private ?array $tags;
 
     public function setId(string $id): self
     {
@@ -157,6 +158,16 @@ class Order
     /**
      * @throws PennyBlackException
      */
+    public function setTags(array $tags): self
+    {
+        $this->tags = $this->itemsMustBeStrings($tags, 'tags');
+
+        return $this;
+    }
+
+    /**
+     * @throws PennyBlackException
+     */
     public function toArray(): array
     {
         $this->validateRequiredFields();
@@ -182,6 +193,7 @@ class Order
             'product_titles' => 'productTitles',
             'promo_codes' => 'promoCodes',
             'is_subscription_reorder' => 'subscriptionReorder',
+            'tags' => 'tags',
         ];
 
         foreach ($optionalFieldsWhenEmpty as $outputKey => $thisProp) {

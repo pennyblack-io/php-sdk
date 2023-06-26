@@ -36,7 +36,8 @@ $order
     ->setProductTitles(['Red Socks', 'Blue Socks'])
     ->setPromoCodes(['15OFF_SOCKS'])
     ->setSkus(['SK-R-1', 'SK-B-1'])
-    ->setSubscriptionReorder(false);
+    ->setSubscriptionReorder(false)
+    ->setTags(['tiktok order']);
 
 $customer = new Customer();
 $customer->setEmail('john.doe@example.com')

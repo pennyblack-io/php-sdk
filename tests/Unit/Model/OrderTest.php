@@ -52,6 +52,7 @@ class OrderTest extends TestCase
         $order->setProductTitles(["Product 1", "Product 2"]);
         $order->setPromoCodes(["PROMO-123", "PROMO-456"]);
         $order->setSubscriptionReorder(true);
+        $order->setTags(["tag1", "tag2"]);
 
         $this->assertEquals([
             'id' => '123',
@@ -71,6 +72,7 @@ class OrderTest extends TestCase
             'product_titles' => ['Product 1', 'Product 2'],
             'promo_codes' => ['PROMO-123', 'PROMO-456'],
             'is_subscription_reorder' => true,
+            'tags' => ['tag1', 'tag2'],
         ], $order->toArray());
     }
 
@@ -96,6 +98,7 @@ class OrderTest extends TestCase
         $order->setSkus([]);
         $order->setProductTitles([]);
         $order->setPromoCodes([]);
+        $order->setTags([]);
 
         $this->assertEquals([
             'id' => '123',
