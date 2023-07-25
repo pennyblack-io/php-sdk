@@ -135,14 +135,26 @@ class ApiTest extends TestCase
         $mockOrder = $this->createMock(Order::class);
         $mockOrder->expects($this->once())
             ->method('toArray')
-            ->willReturn(['id' => 123]);
+            ->willReturn([
+                'id' => 123,
+                'attributes' => [
+                    'key1' => 'value1',
+                    'key2' => 'value2',
+                ]
+            ]);
         $mockCustomer = $this->createMock(Customer::class);
         $mockCustomer->expects($this->once())
             ->method('toArray')
             ->willReturn(['email' => 'john@example.com']);
 
         $content = [
-            'order' => ['id' => 123],
+            'order' => [
+                'id' => 123,
+                'attributes' => [
+                    'key1' => 'value1',
+                    'key2' => 'value2',
+                ],
+            ],
             'customer' => ['email' => 'john@example.com'],
             'origin' => 'magento',
         ];
@@ -196,9 +208,9 @@ class ApiTest extends TestCase
     {
         $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
 
-        $merchantId = "MERCHANT_X";
-        $locationId = "LOCATION_Y";
-        $orderId = "#42";
+        $merchantId = 'MERCHANT_X';
+        $locationId = 'LOCATION_Y';
+        $orderId = '#42';
 
         $this->mockClientRequestAndResponse(
             'pk-secret',
@@ -221,7 +233,7 @@ class ApiTest extends TestCase
     {
         $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
 
-        $orderId = "#42";
+        $orderId = '#42';
 
         $this->mockClientRequestAndResponse(
             'pk-secret',
@@ -244,9 +256,9 @@ class ApiTest extends TestCase
     {
         $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
 
-        $merchantId = "MERCHANT_X";
-        $locationId = "LOCATION_Y";
-        $orderIds = ["#42", "#24", "#84"];
+        $merchantId = 'MERCHANT_X';
+        $locationId = 'LOCATION_Y';
+        $orderIds = ['#42', '#24', '#84'];
 
         $this->mockClientRequestAndResponse(
             'pk-secret',
@@ -269,7 +281,7 @@ class ApiTest extends TestCase
     {
         $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
 
-        $orderIds = ["#42", "#24", "#84"];
+        $orderIds = ['#42', '#24', '#84'];
 
         $this->mockClientRequestAndResponse(
             'pk-secret',
@@ -301,7 +313,7 @@ class ApiTest extends TestCase
             ['status' => 'no print']
         );
 
-        $output = $api->getOrderPrintStatus('MERCHANT_ID', "42");
+        $output = $api->getOrderPrintStatus('MERCHANT_ID', '42');
         $this->assertEquals($output, ['status' => 'no print']);
     }
 

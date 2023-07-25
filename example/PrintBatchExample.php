@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . "/../vendor/autoload.php";
+include __DIR__ . '/../vendor/autoload.php';
 
 use PennyBlack\Exception\PennyBlackException;
 use PennyBlack\Api;
@@ -11,27 +11,27 @@ $httpClient = new Client();
 $streamFactory = new HttpFactory();
 $requestFactory = new HttpFactory();
 
-$apiKey = "YOUR-API-KEY";
+$apiKey = 'YOUR-API-KEY';
 $isTest = true;
 
 $api = new Api($httpClient, $requestFactory, $streamFactory, $apiKey, $isTest);
 
 // This can be either the internal ecommerce platform order id or the customer-friendly order number
-$orderIds = ["ORDER_ID1", "ORDER_ID2"];
+$orderIds = ['ORDER_ID1', 'ORDER_ID2'];
 
 // If integrating for a 3PL / Warehouse with multiple vendors you will need the merchant_id
 // If you are the merchant fulfilling your own orders then this should not be necessary
 //$merchantId = null;
-$merchantId = "YOUR-MERCHANT-ID";
+$merchantId = 'YOUR-MERCHANT-ID';
 
 // If you have a single printer then you do not need a print location
 // If you have multiple printers setup then you need to send the location you want to print from
 //$locationId = null;
-$locationId = "YOUR-LOCATION-ID";
+$locationId = 'YOUR-LOCATION-ID';
 
 try {
     $response = $api->requestBatchPrint($orderIds, $locationId, $merchantId);
     print_r($response);
 } catch (PennyBlackException $e) {
-    print "OOPS! Something went wrong: " . $e->getMessage();
+    print 'OOPS! Something went wrong: ' . $e->getMessage();
 }

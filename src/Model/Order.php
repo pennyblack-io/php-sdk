@@ -26,6 +26,7 @@ class Order
     private ?array $promoCodes;
     private ?bool $subscriptionReorder;
     private ?array $tags;
+    private ?array $attributes;
 
     public function setId(string $id): self
     {
@@ -168,17 +169,27 @@ class Order
     /**
      * @throws PennyBlackException
      */
+    public function setAttributes(array $attributes): self
+    {
+        $this->attributes = $this->validateAttributes($attributes);
+
+        return $this;
+    }
+
+    /**
+     * @throws PennyBlackException
+     */
     public function toArray(): array
     {
         $this->validateRequiredFields();
 
         $output = [
-            "id" => $this->id,
-            "number" => $this->number,
-            "created_at" => $this->createdAt->format('Y-m-d H:i:s'),
-            "total_amount" => $this->totalAmount,
-            "total_items" => $this->totalItems,
-            "currency" => $this->currency,
+            'id' => $this->id,
+            'number' => $this->number,
+            'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
+            'total_amount' => $this->totalAmount,
+            'total_items' => $this->totalItems,
+            'currency' => $this->currency,
         ];
 
         $optionalFieldsWhenEmpty = [
@@ -194,6 +205,7 @@ class Order
             'promo_codes' => 'promoCodes',
             'is_subscription_reorder' => 'subscriptionReorder',
             'tags' => 'tags',
+            'attributes' => 'attributes',
         ];
 
         foreach ($optionalFieldsWhenEmpty as $outputKey => $thisProp) {
@@ -233,5 +245,23 @@ class Order
         });
 
         return $items;
+    }
+
+    /**
+     * @throws PennyBlackException
+     */
+    private function validateAttributes(array $attributes): array
+    {
+        foreach ($attributes as $key => $value) {
+            if (!is_string($key)) {
+                throw new PennyBlackException('Attribute keys must be strings, received: ' . $key);
+            }
+
+            if (empty($value)) {
+                throw new PennyBlackException(sprintf('Received an empty value for attribute "%s"', $key));
+            }
+        }
+
+        return $attributes;
     }
 }
