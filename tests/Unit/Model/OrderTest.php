@@ -148,4 +148,76 @@ class OrderTest extends TestCase
 
         $order->toArray();
     }
+
+    public function testItThrowsAnExceptionIfNonStringAttributeKeysAreSet()
+    {
+        $this->expectException(PennyBlackException::class);
+        $this->expectExceptionMessage('Attribute keys must be strings, received: 1');
+
+        $createdAt = new \DateTime();
+        $order = new Order();
+        $order->setId('123');
+        $order->setNumber('#123');
+        $order->setTotalAmount(123.45);
+        $order->setTotalItems(1);
+        $order->setCreatedAt($createdAt);
+        $order->setCurrency('GBP');
+        $order->setAttributes([1 => 'value1']);
+
+        $order->toArray();
+    }
+
+    public function testItThrowsAnExceptionIfANullAttributeValueIsSet()
+    {
+        $this->expectException(PennyBlackException::class);
+        $this->expectExceptionMessage('Received an empty value for attribute "my_attribute"');
+
+        $createdAt = new \DateTime();
+        $order = new Order();
+        $order->setId('123');
+        $order->setNumber('#123');
+        $order->setTotalAmount(123.45);
+        $order->setTotalItems(1);
+        $order->setCreatedAt($createdAt);
+        $order->setCurrency('GBP');
+        $order->setAttributes(['my_attribute' => null]);
+
+        $order->toArray();
+    }
+
+    public function testItThrowsAnExceptionIfAnEmptyStringAttributeValueIsSet()
+    {
+        $this->expectException(PennyBlackException::class);
+        $this->expectExceptionMessage('Received an empty value for attribute "my_attribute"');
+
+        $createdAt = new \DateTime();
+        $order = new Order();
+        $order->setId('123');
+        $order->setNumber('#123');
+        $order->setTotalAmount(123.45);
+        $order->setTotalItems(1);
+        $order->setCreatedAt($createdAt);
+        $order->setCurrency('GBP');
+        $order->setAttributes(['my_attribute' => '']);
+
+        $order->toArray();
+    }
+
+    public function testItThrowsAnExceptionIfAnEmptyArrayAttributeValueIsSet()
+    {
+        $this->expectException(PennyBlackException::class);
+        $this->expectExceptionMessage('Received an empty value for attribute "my_attribute"');
+
+        $createdAt = new \DateTime();
+        $order = new Order();
+        $order->setId('123');
+        $order->setNumber('#123');
+        $order->setTotalAmount(123.45);
+        $order->setTotalItems(1);
+        $order->setCreatedAt($createdAt);
+        $order->setCurrency('GBP');
+        $order->setAttributes(['my_attribute' => []]);
+
+        $order->toArray();
+    }
 }

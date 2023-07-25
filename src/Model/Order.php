@@ -166,9 +166,12 @@ class Order
         return $this;
     }
 
+    /**
+     * @throws PennyBlackException
+     */
     public function setAttributes(array $attributes): self
     {
-        $this->attributes = $attributes;
+        $this->attributes = $this->validateAttributes($attributes);
 
         return $this;
     }
@@ -242,5 +245,23 @@ class Order
         });
 
         return $items;
+    }
+
+    /**
+     * @throws PennyBlackException
+     */
+    private function validateAttributes(array $attributes): array
+    {
+        foreach ($attributes as $key => $value) {
+            if (!is_string($key)) {
+                throw new PennyBlackException('Attribute keys must be strings, received: ' . $key);
+            }
+
+            if (empty($value)) {
+                throw new PennyBlackException(sprintf('Received an empty value for attribute "%s"', $key));
+            }
+        }
+
+        return $attributes;
     }
 }
