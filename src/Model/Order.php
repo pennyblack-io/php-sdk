@@ -26,6 +26,7 @@ class Order
     private ?array $promoCodes;
     private ?bool $subscriptionReorder;
     private ?array $tags;
+    private ?array $attributes;
 
     public function setId(string $id): self
     {
@@ -165,6 +166,13 @@ class Order
         return $this;
     }
 
+    public function setAttributes(array $attributes): self
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
     /**
      * @throws PennyBlackException
      */
@@ -173,12 +181,12 @@ class Order
         $this->validateRequiredFields();
 
         $output = [
-            "id" => $this->id,
-            "number" => $this->number,
-            "created_at" => $this->createdAt->format('Y-m-d H:i:s'),
-            "total_amount" => $this->totalAmount,
-            "total_items" => $this->totalItems,
-            "currency" => $this->currency,
+            'id' => $this->id,
+            'number' => $this->number,
+            'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
+            'total_amount' => $this->totalAmount,
+            'total_items' => $this->totalItems,
+            'currency' => $this->currency,
         ];
 
         $optionalFieldsWhenEmpty = [
@@ -194,6 +202,7 @@ class Order
             'promo_codes' => 'promoCodes',
             'is_subscription_reorder' => 'subscriptionReorder',
             'tags' => 'tags',
+            'attributes' => 'attributes',
         ];
 
         foreach ($optionalFieldsWhenEmpty as $outputKey => $thisProp) {

@@ -89,9 +89,9 @@ class Customer
         $this->validateRequiredFields();
 
         $output = [
-            "first_name" => $this->firstName,
-            "last_name" => $this->lastName,
-            "email" => $this->email,
+            'first_name' => $this->firstName,
+            'last_name' => $this->lastName,
+            'email' => $this->email,
         ];
 
         $optionalFieldsWhenEmpty = [
@@ -107,13 +107,13 @@ class Customer
         }
 
         if (isset($this->marketingConsent)) {
-            $output["marketing_consent"] = $this->marketingConsent;
+            $output['marketing_consent'] = $this->marketingConsent;
         }
         if (isset($this->totalOrders)) {
-            $output["total_orders"] = $this->totalOrders;
+            $output['total_orders'] = $this->totalOrders;
         }
         if (isset($this->totalSpent)) {
-            $output["total_spent"] = $this->totalSpent;
+            $output['total_spent'] = $this->totalSpent;
         }
 
         return $output;

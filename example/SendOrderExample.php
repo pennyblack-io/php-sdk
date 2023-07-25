@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . "/../vendor/autoload.php";
+include __DIR__ . '/../vendor/autoload.php';
 
 use PennyBlack\Api;
 use PennyBlack\Exception\PennyBlackException;
@@ -13,14 +13,14 @@ $httpClient = new Client();
 $streamFactory = new HttpFactory();
 $requestFactory = new HttpFactory();
 
-$apiKey = "YOUR-API-KEY";
+$apiKey = 'YOUR-API-KEY';
 $isTest = true;
 
 $api = new Api($httpClient, $requestFactory, $streamFactory, $apiKey, $isTest);
 
 $order = new Order();
 $order
-    ->setId("1")
+    ->setId('1')
     ->setNumber('#100001')
     ->setCreatedAt(new \DateTime())
     ->setCurrency('GBP')
@@ -45,7 +45,7 @@ $customer->setEmail('john.doe@example.com')
     ->setLastName('Doe')
     ->setLanguage('en')
     ->setMarketingConsent(true)
-    ->setVendorCustomerId("89714912")
+    ->setVendorCustomerId('89714912')
     ->setTags(['VIP', 'Loyal Customer'])
     ->setTotalOrders(5)
     ->setTotalSpent(1234.56);
@@ -53,5 +53,5 @@ $customer->setEmail('john.doe@example.com')
 try {
     $api->sendOrder($order, $customer, 'magento');
 } catch (PennyBlackException $e) {
-    print "OOPS! Something went wrong: " . $e->getMessage();
+    print 'OOPS! Something went wrong: ' . $e->getMessage();
 }

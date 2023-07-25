@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . "/../vendor/autoload.php";
+include __DIR__ . '/../vendor/autoload.php';
 
 use PennyBlack\Api;
 use PennyBlack\Exception\PennyBlackException;
@@ -11,13 +11,13 @@ $httpClient = new Client();
 $streamFactory = new HttpFactory();
 $requestFactory = new HttpFactory();
 
-$apiKey = "YOUR-API-KEY";
+$apiKey = 'YOUR-API-KEY';
 $isTest = true;
 
 $api = new Api($httpClient, $requestFactory, $streamFactory, $apiKey, $isTest);
 
 try {
-    $api->installStore("store.example.com");
+    $api->installStore('store.example.com');
 } catch (PennyBlackException $e) {
-    print "OOPS! Something went wrong: " . $e->getMessage();
+    print 'OOPS! Something went wrong: ' . $e->getMessage();
 }
