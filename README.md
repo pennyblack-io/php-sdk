@@ -11,7 +11,7 @@ See the [Penny Black API documentation](https://pennyblack.stoplight.io/docs/pen
 
 ## Prerequisites
 
-* PHP >=7.4 || >=7.2
+* PHP >=7.2
 * Composer
 
 ## Installation
