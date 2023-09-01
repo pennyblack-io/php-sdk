@@ -23,11 +23,20 @@ class Api
     private const MAX_RETRIES = 3;
     private const SUCCESS_RESPONSE_CODES = [200, 201, 202, 204];
 
-    private ClientInterface $httpClient;
-    private RequestFactoryInterface $requestFactory;
-    private StreamFactoryInterface $streamFactory;
-    private string $apiKey;
-    private string $baseUrl;
+    /** @var ClientInterface */
+    private $httpClient;
+
+    /** @var RequestFactoryInterface */
+    private $requestFactory;
+
+    /** @var StreamFactoryInterface */
+    private $streamFactory;
+
+    /** @var string */
+    private $apiKey;
+
+    /** @var string */
+    private $baseUrl;
 
     public function __construct(
         ClientInterface $httpClient,

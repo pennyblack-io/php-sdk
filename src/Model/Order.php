@@ -8,25 +8,62 @@ class Order
 {
     private const REQUIRED_FIELDS = ['id', 'number', 'createdAt', 'totalAmount', 'totalItems', 'currency'];
 
-    private string $id;
-    private string $number;
-    private \DateTimeInterface $createdAt;
-    private float $totalAmount;
-    private int $totalItems;
-    private string $currency;
-    private ?string $billingCountry;
-    private ?string $billingPostcode;
-    private ?string $billingCity;
-    private ?string $shippingCountry;
-    private ?string $shippingPostcode;
-    private ?string $shippingCity;
-    private ?string $giftMessage;
-    private ?array $skus;
-    private ?array $productTitles;
-    private ?array $promoCodes;
-    private ?bool $subscriptionReorder;
-    private ?array $tags;
-    private ?array $attributes;
+    /** @var string */
+    private $id;
+
+    /** @var string */
+    private $number;
+
+    /** @var \DateTimeInterface */
+    private $createdAt;
+
+    /** @var float */
+    private $totalAmount;
+
+    /** @var int */
+    private $totalItems;
+
+    /** @var string */
+    private $currency;
+
+    /** @var string|null */
+    private $billingCountry;
+
+    /** @var string|null */
+    private $billingPostcode;
+
+    /** @var string|null */
+    private $billingCity;
+
+    /** @var string|null */
+    private $shippingCountry;
+
+    /** @var string|null */
+    private $shippingPostcode;
+
+    /** @var string|null */
+    private $shippingCity;
+
+    /** @var string|null */
+    private $giftMessage;
+
+    /** @var array|null */
+    private $skus;
+
+    /** @var array|null */
+    private $productTitles;
+
+    /** @var array|null */
+    private $promoCodes;
+
+    /** @var bool|null */
+    private $subscriptionReorder;
+
+    /** @var array|null */
+    private $tags;
+
+    /** @var array|null */
+    private $attributes;
 
     public function setId(string $id): self
     {
