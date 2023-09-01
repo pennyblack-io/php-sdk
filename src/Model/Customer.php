@@ -8,15 +8,32 @@ class Customer
 {
     private const REQUIRED_FIELDS = ['firstName', 'lastName', 'email'];
 
-    private string $firstName;
-    private string $lastName;
-    private string $email;
-    private ?string $vendorCustomerId;
-    private ?string $language;
-    private ?bool $marketingConsent;
-    private ?int $totalOrders;
-    private ?array $tags;
-    private ?float $totalSpent;
+    /** @var string */
+    private $firstName;
+
+    /** @var string */
+    private $lastName;
+
+    /** @var string */
+    private $email;
+
+    /** @var string|null */
+    private $vendorCustomerId;
+
+    /** @var string|null */
+    private $language;
+
+    /** @var bool|null */
+    private $marketingConsent;
+
+    /** @var int|null */
+    private $totalOrders;
+
+    /** @var array|null */
+    private $tags;
+
+    /** @var float|null */
+    private $totalSpent;
 
     public function setVendorCustomerId(string $vendorCustomerId): self
     {
