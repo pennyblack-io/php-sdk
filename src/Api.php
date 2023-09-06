@@ -38,18 +38,29 @@ class Api
     /** @var string */
     private $baseUrl;
 
+    /**
+     * A version number of your client plugin (not the platform, but your integration)
+     * that can help Penny Black support with debugging.
+     * To offer flexibility in implementation, this can be passed either when instantiating the API client,
+     * or on the endpoints that use them directly.
+     * @var string
+     */
+    private $originAppVersion;
+
     public function __construct(
         ClientInterface $httpClient,
         RequestFactoryInterface $requestFactory,
         StreamFactoryInterface $streamFactory,
         string $apiKey,
-        bool $isTest = false
+        bool $isTest = false,
+        string $originAppVersion = ''
     ) {
         $this->httpClient = $httpClient;
         $this->requestFactory = $requestFactory;
         $this->streamFactory = $streamFactory;
         $this->apiKey = $apiKey;
         $this->baseUrl = $isTest ? self::TEST_URL : self::PROD_URL;
+        $this->originAppVersion = $originAppVersion;
     }
 
     /**
@@ -57,9 +68,16 @@ class Api
      *
      * @throws PennyBlackException
      */
-    public function installStore(string $shopUrl): void
+    public function installStore(string $shopUrl, string $originAppVersion = ''): void
     {
-        $this->sendPostRequest('ingest/install', ['shop_url' => $shopUrl]);
+        $params = ['shop_url' => $shopUrl];
+        if ($originAppVersion) {
+            $params['origin_app_version'] = $originAppVersion;
+        } elseif ($this->originAppVersion) {
+            $params['origin_app_version'] = $this->originAppVersion;
+        }
+
+        $this->sendPostRequest('ingest/install', $params);
     }
 
     /**
@@ -69,13 +87,20 @@ class Api
      *
      * @throws PennyBlackException
      */
-    public function sendOrder(Order $order, Customer $customer, string $origin): void
+    public function sendOrder(Order $order, Customer $customer, string $origin, string $originAppVersion = ''): void
     {
-        $this->sendPostRequestWithRetries('ingest/order', [
+        $params = [
             'order' => $order->toArray(),
             'customer' => $customer->toArray(),
             'origin' => $origin
-        ]);
+        ];
+        if ($originAppVersion) {
+            $params['origin_app_version'] = $originAppVersion;
+        } elseif ($this->originAppVersion) {
+            $params['origin_app_version'] = $this->originAppVersion;
+        }
+
+        $this->sendPostRequestWithRetries('ingest/order', $params);
     }
 
     /**
