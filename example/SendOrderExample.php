@@ -51,7 +51,7 @@ $customer->setEmail('john.doe@example.com')
     ->setTotalSpent(1234.56);
 
 try {
-    $api->sendOrder($order, $customer, 'magento');
+    $api->sendOrder($order, $customer, 'magento', '1.0.1');
 } catch (PennyBlackException $e) {
     print 'OOPS! Something went wrong: ' . $e->getMessage();
 }

@@ -66,7 +66,30 @@ class ApiTest extends TestCase
             'pk-secret',
             'POST',
             'https://api.test.pennyblack.io/ingest/install',
-            ['shop_url' => 'test-domain.com'],
+            ['shop_url' => 'test-domain.com', 'origin_app_version' => '1.0.1'],
+            200,
+            ['success' => true]
+        );
+
+        $api->installStore('test-domain.com', '1.0.1');
+    }
+
+    public function testItSendsAStoreInstallRequestUsingAppVersionOnApi()
+    {
+        $api = new Api(
+            $this->mockClient,
+            $this->mockRequestFactory,
+            $this->mockStreamFactory,
+            'pk-secret',
+            true,
+            '1.5.4'
+        );
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.test.pennyblack.io/ingest/install',
+            ['shop_url' => 'test-domain.com', 'origin_app_version' => '1.5.4'],
             200,
             ['success' => true]
         );
@@ -169,6 +192,38 @@ class ApiTest extends TestCase
         );
 
         $api->sendOrder($mockOrder, $mockCustomer, 'magento');
+    }
+
+    public function testItSendsAnOrderWithAnAppVersion()
+    {
+        $api = new Api($this->mockClient, $this->mockRequestFactory, $this->mockStreamFactory, 'pk-secret');
+
+        $mockOrder = $this->createMock(Order::class);
+        $mockOrder->expects($this->once())
+            ->method('toArray')
+            ->willReturn(['id' => 123]);
+        $mockCustomer = $this->createMock(Customer::class);
+        $mockCustomer->expects($this->once())
+            ->method('toArray')
+            ->willReturn(['email' => 'john@example.com']);
+
+        $content = [
+            'order' => ['id' => 123],
+            'customer' => ['email' => 'john@example.com'],
+            'origin' => 'magento',
+            'origin_app_version' => '1.0.0',
+        ];
+
+        $this->mockClientRequestAndResponse(
+            'pk-secret',
+            'POST',
+            'https://api.pennyblack.io/ingest/order',
+            $content,
+            202,
+            ['success' => true]
+        );
+
+        $api->sendOrder($mockOrder, $mockCustomer, 'magento', '1.0.0');
     }
 
     public function testItThrowsAnApiExceptionIfServerSideOrderValidationFails()

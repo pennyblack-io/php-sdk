@@ -14,7 +14,9 @@ $requestFactory = new HttpFactory();
 $apiKey = 'YOUR-API-KEY';
 $isTest = true;
 
-$api = new Api($httpClient, $requestFactory, $streamFactory, $apiKey, $isTest);
+// This example sets the origin app version on the API class
+// Alternatively, it could be set on the installStore() call
+$api = new Api($httpClient, $requestFactory, $streamFactory, $apiKey, $isTest, '1.0.1');
 
 try {
     $api->installStore('store.example.com');

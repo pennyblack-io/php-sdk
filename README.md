@@ -70,18 +70,26 @@ $streamFactory = new HttpFactory();
 $requestFactory = new HttpFactory();
 
 $apiKey = "YOUR-API-KEY";
+$myIntegrationVersion = "1.0.1";
 $isTest = true;
 
-$api = new Api($httpClient, $requestFactory, $streamFactory, $apiKey, $isTest);
+$api = new Api($httpClient, $requestFactory, $streamFactory, $apiKey, $isTest, $myIntegrationVersion);
 ```
+
+The `$myIntegrationVersion` parameter is used to identify which version of the integration is being run to our support team.
+If you are using a custom integration then this is of limited value, but for building platform modules/plugins/extensions it can be very useful.
+This parameter can either be passed into the API constructor, or set on specific function calls that support it, whichever approach is most convenient for your integration.
+
 
 ### Installing your store
 
 This request acts as validation for your API key and configures Penny Black with your store domain:
 
 ```php
-$api->installStore("your.store.com");
+$api->installStore("your.store.com", "1.0.1");
 ```
+
+The second parameter is the version of your integration and is optional, see the note above.
 
 ### Sending an order
 
@@ -115,8 +123,10 @@ $customer = new Customer()
     
 $origin = "magento";
     
-$api->sendOrder($order, $customer, $origin);
+$api->sendOrder($order, $customer, $origin, "1.0.1");
 ```
+
+The last parameter is the version of your integration and is optional, see the note above.
 
 ### Print order
 
