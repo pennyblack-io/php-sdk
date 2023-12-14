@@ -19,7 +19,7 @@ See the [Penny Black API documentation](https://pennyblack.stoplight.io/docs/pen
 For production environments you can include the library as a dependency in your project using composer.
 
 ```bash
-composer require pennyblack-io/php-sdk
+composer require pennyblack/php-sdk
 ```
 
 
