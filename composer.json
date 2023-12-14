@@ -1,6 +1,7 @@
 {
   "name": "pennyblack/php-sdk",
   "description": "Penny Black PHP SDK",
+  "license": "MIT",
   "authors": [
     {
       "name": "Penny Black",
