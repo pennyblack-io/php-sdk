@@ -17,20 +17,6 @@ See the [Penny Black API documentation](https://pennyblack.stoplight.io/docs/pen
 ## Installation
 
 For production environments you can include the library as a dependency in your project using composer.
-Currently, you will need to add a custom repository to your `composer.json`:
-
-```json
-{
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "git@github.com:pennyblack-io/php-sdk.git"
-    }
-  ]
-}
-```
-
-Now you can require the library:
 
 ```bash
 composer require pennyblack-io/php-sdk
