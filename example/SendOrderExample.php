@@ -33,11 +33,16 @@ $order
     ->setShippingCountry('GB')
     ->setShippingPostcode('SE15AB')
     ->setGiftMessage('I hope you enjoy the socks, love Mum. xxx')
+    ->setGiftMessageRecipient('Tim')
     ->setProductTitles(['Red Socks', 'Blue Socks'])
     ->setPromoCodes(['15OFF_SOCKS'])
     ->setSkus(['SK-R-1', 'SK-B-1'])
     ->setSubscriptionReorder(false)
-    ->setTags(['tiktok order']);
+    ->setTags(['tiktok order'])
+    ->setAttributes([
+        'attribute1' => 'value1',
+        'attribute2' => 'value2',
+    ]);
 
 $customer = new Customer();
 $customer->setEmail('john.doe@example.com')
@@ -48,7 +53,11 @@ $customer->setEmail('john.doe@example.com')
     ->setVendorCustomerId('89714912')
     ->setTags(['VIP', 'Loyal Customer'])
     ->setTotalOrders(5)
-    ->setTotalSpent(1234.56);
+    ->setTotalSpent(1234.56)
+    ->setAttributes([
+        'customer_att1' => 'value1',
+        'customer_att2' => 'value2',
+    ]);
 
 try {
     $api->sendOrder($order, $customer, 'magento', '1.0.1');

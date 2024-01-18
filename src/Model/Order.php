@@ -47,6 +47,9 @@ class Order
     /** @var string|null */
     private $giftMessage;
 
+    /** @var string|null */
+    private $giftMessageRecipient;
+
     /** @var array|null */
     private $skus;
 
@@ -156,6 +159,13 @@ class Order
         return $this;
     }
 
+    public function setGiftMessageRecipient(string $giftMessageRecipient): self
+    {
+        $this->giftMessageRecipient = $giftMessageRecipient;
+
+        return $this;
+    }
+
     /**
      * @throws PennyBlackException
      */
@@ -237,6 +247,7 @@ class Order
             'shipping_postcode' => 'shippingPostcode',
             'shipping_city' => 'shippingCity',
             'gift_message' => 'giftMessage',
+            'gift_message_recipient' => 'giftMessageRecipient',
             'skus' => 'skus',
             'product_titles' => 'productTitles',
             'promo_codes' => 'promoCodes',
@@ -294,8 +305,8 @@ class Order
                 throw new PennyBlackException('Attribute keys must be strings, received: ' . $key);
             }
 
-            if (empty($value)) {
-                throw new PennyBlackException(sprintf('Received an empty value for attribute "%s"', $key));
+            if (is_null($value)) {
+                throw new PennyBlackException(sprintf('Received a null value for attribute "%s"', $key));
             }
         }
 
