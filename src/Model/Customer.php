@@ -35,6 +35,9 @@ class Customer
     /** @var float|null */
     private $totalSpent;
 
+    /** @var array|null */
+    private $attributes;
+
     public function setVendorCustomerId(string $vendorCustomerId): self
     {
         $this->vendorCustomerId = $vendorCustomerId;
@@ -101,6 +104,16 @@ class Customer
     /**
      * @throws PennyBlackException
      */
+    public function setAttributes(array $attributes): self
+    {
+        $this->attributes = $this->validateAttributes($attributes);
+
+        return $this;
+    }
+
+    /**
+     * @throws PennyBlackException
+     */
     public function toArray(): array
     {
         $this->validateRequiredFields();
@@ -115,6 +128,7 @@ class Customer
             'vendor_customer_id' => 'vendorCustomerId',
             'language' => 'language',
             'tags' => 'tags',
+            'attributes' => 'attributes',
         ];
 
         foreach ($optionalFieldsWhenEmpty as $outputKey => $thisProp) {
@@ -146,5 +160,23 @@ class Customer
                 throw new PennyBlackException('Required field "' . $requiredField . '" must be set');
             }
         }
+    }
+
+    /**
+     * @throws PennyBlackException
+     */
+    private function validateAttributes(array $attributes): array
+    {
+        foreach ($attributes as $key => $value) {
+            if (!is_string($key)) {
+                throw new PennyBlackException('Attribute keys must be strings, received: ' . $key);
+            }
+
+            if (is_null($value)) {
+                throw new PennyBlackException(sprintf('Received a null value for attribute "%s"', $key));
+            }
+        }
+
+        return $attributes;
     }
 }
