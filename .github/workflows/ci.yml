@@ -18,6 +18,7 @@ jobs:
           php-version: ${{ matrix.php }}
       - uses: php-actions/composer@v6
         with:
+          args: --prefer-lowest
           php_version: ${{ matrix.php }}
           version: "2.2"
       - run: "composer unit-test"
