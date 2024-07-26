@@ -201,6 +201,7 @@ class Api
             ->withHeader('Content-Type', 'application/json')
             ->withBody($body);
 
+        /** @var RequestInterface $request */
         return $this->sendRequest($request);
     }
 
@@ -215,6 +216,7 @@ class Api
         $request = $this->requestFactory->createRequest('GET', $this->baseUrl . ltrim($path, '/'))
             ->withHeader('X-Api-Key', $this->apiKey);
 
+        /** @var RequestInterface $request */
         return $this->sendRequest($request);
     }
 
